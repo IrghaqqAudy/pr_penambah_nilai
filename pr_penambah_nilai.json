@@ -1,0 +1,483 @@
+{
+  "name": "pr_penambah_nilai",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Formulir Pendaftaran SMPIT XYZ",
+        "formDescription": "Mohon isi formulir pendaftaran ini dengan informasi yang selengkap-lengkapnya:",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nama Calon Siswa",
+              "placeholder": "nama lengkap"
+            },
+            {
+              "fieldLabel": "Jenis Kelamin",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Laki-laki"
+                  },
+                  {
+                    "option": "Perempuan"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Tanggal Lahir",
+              "fieldType": "date"
+            },
+            {
+              "fieldLabel": "Alamat Rumah"
+            },
+            {
+              "fieldLabel": "No. Handphone",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Email",
+              "placeholder": "fulan@example.com"
+            },
+            {
+              "fieldLabel": "Sekolah Asal"
+            },
+            {
+              "fieldLabel": "Dokumen Pendukung (Kartu Keluarga, Akta Kelahiran, Izajah/Surat Keterangan Lulus)",
+              "fieldType": "file",
+              "acceptFileTypes": "eg. .pdf, .jpg, .png"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "4fade623-8f41-4a1f-b24a-79e5b6a36095",
+      "name": "On form submission",
+      "webhookId": "e2599444-6c96-485b-ade4-1c8942815a54"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7916f17c-042b-448a-acd0-cccd22c5816c",
+              "leftValue": "={{ $json['Sekolah Asal'] }}",
+              "rightValue": "SDIT XYZ",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        -16
+      ],
+      "id": "a3cb89b9-afe0-43ce-831c-a17abb69fb41",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "26bd7683-188d-499b-a5eb-46a1ac80a3e1",
+              "leftValue": "={{ $json['Dokumen Pendukung (Kartu Keluarga, Akta Kelahiran, Izajah/Surat Keterangan Lulus)'][0].filename }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "ecb2b37d-0448-4953-82ac-1ef698b4296a",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Konfirmasi Pendaftaran",
+        "emailType": "text",
+        "message": "=Assalamualaikum Warahmatullahi Wabarakatuh, \n\nKepada yang kami hormati orang tua murid dari {{ $('On form submission').item.json['Nama Calon Siswa'] }}, berikut kami informasikan bahwa dokumen pendukung masih belum kami terima. Mohon untuk dapat segera dilengkapi untuk kelengkapan dokumen pendaftaran masuk.\n\nSalam kami,\nPanitia Penerimaan Murid Baru SMPIT XYZ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        176
+      ],
+      "id": "1ff02d0a-7310-44bc-afdb-621c02ea16ae",
+      "name": "Send a message",
+      "webhookId": "17f7dd51-4d68-4b1e-bdb9-029b2ce3416f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UK6BwBs6TVA7O4fg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE",
+          "mode": "list",
+          "cachedResultName": "daftar_calon_siswa_baru",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "internal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "jenis_kelamin": "={{ $('On form submission').item.json['Jenis Kelamin'] }}",
+            "tanggal_lahir": "={{ $('On form submission').item.json['Tanggal Lahir'] }}",
+            "asal_sekolah": "={{ $('On form submission').item.json['Sekolah Asal'] }}",
+            "keterangan-dokumen": "={{ $('On form submission').item.json['Dokumen Pendukung (Kartu Keluarga, Akta Kelahiran, Izajah/Surat Keterangan Lulus)'][0].filename }}",
+            "nama_calon_siswa": "={{ $json['Nama Calon Siswa'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nama_calon_siswa",
+              "displayName": "nama_calon_siswa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "tanggal_lahir",
+              "displayName": "tanggal_lahir",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "jenis_kelamin",
+              "displayName": "jenis_kelamin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "asal_sekolah",
+              "displayName": "asal_sekolah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "keterangan-dokumen",
+              "displayName": "keterangan-dokumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        -96
+      ],
+      "id": "ff0d667c-0cfa-4724-97b1-e21db645d013",
+      "name": "internal",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "He5QL11c5CbR7vzK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE",
+          "mode": "list",
+          "cachedResultName": "daftar_calon_siswa_baru",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 734828108,
+          "mode": "list",
+          "cachedResultName": "eksternal",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kEA5hZNryfedhd4k-N-pF-mHZGjrvNCXGmvyOb6pdCE/edit#gid=734828108"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nama_calon_siswa": "={{ $json['Nama Calon Siswa'] }}",
+            "tanggal_lahir": "={{ $json['Tanggal Lahir'] }}",
+            "jenis_kelamin": "={{ $json['Jenis Kelamin'] }}",
+            "asal_sekolah": "={{ $json['Sekolah Asal'] }}",
+            "keterangan-dokumen": "={{ $json['Dokumen Pendukung (Kartu Keluarga, Akta Kelahiran, Izajah/Surat Keterangan Lulus)'][0].filename }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nama_calon_siswa",
+              "displayName": "nama_calon_siswa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tanggal_lahir",
+              "displayName": "tanggal_lahir",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "jenis_kelamin",
+              "displayName": "jenis_kelamin",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "asal_sekolah",
+              "displayName": "asal_sekolah",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "keterangan-dokumen",
+              "displayName": "keterangan-dokumen",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        96
+      ],
+      "id": "f54fafff-060a-4460-ae85-5147d60cfae9",
+      "name": "eksternal",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "He5QL11c5CbR7vzK",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "Konfirmasi Pendaftaran",
+        "emailType": "text",
+        "message": "=Assalamualaikum ww,\n\n\nKepada yth orang tua murid dari {{ $('On form submission').item.json['Nama Calon Siswa'] }}, terima kasih sudah mendaftar di sekolah SMPIT XYZ.\n\nBerikut kami informasikan untuk jadwal psikotest murid internal dari SIT XYZ yang insyaallah akan dilaksanakan pada hari Senin, tanggal 5 Oktober 2026 mulai pukul 09.00 WIB, bertempat di Gedung Serbaguna SMPIT XYZ.\n\nDemikian informasi ini kami sampaikan, semoga selalu diberikan kesehatan dan keberkahan buat kita semua.\n\nWassalammualaikum ww,\nPanitia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -96
+      ],
+      "id": "32732072-84e0-4297-a1a4-62169d3b807a",
+      "name": "Send a message1",
+      "webhookId": "c57a343d-e35c-49df-a7c1-1bca164f295b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UK6BwBs6TVA7O4fg",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json.Email }}",
+        "subject": "=Konfirmasi Pendaftaran Murid Baru",
+        "emailType": "text",
+        "message": "=Assalamualaikum ww,\n\nKepada yth orang tua murid dari {{ $('On form submission').item.json['Nama Calon Siswa'] }}, terima kasih sudah mendaftar di sekolah SMPIT XYZ.\n\nBerikut kami informasikan untuk jadwal psikotest yang insyaallah akan dilaksanakan pada hari Senin, tanggal 5 Oktober 2026 mulai pukul 13.00 WIB, bertempat di Gedung Serbaguna SMPIT XYZ.\n\nDemikian informasi ini kami sampaikan, mohon untuk hadir tepat waktu dan semoga selalu diberikan kesehatan dan keberkahan buat kita semua.    \n\nWassalammualaikum ww,  \nPanitia",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        96
+      ],
+      "id": "c031aa77-6853-4cd0-a543-9178e73ae5f7",
+      "name": "Send a message2",
+      "webhookId": "c2b0f04e-3170-4b6d-a45b-be33da5690a3",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "UK6BwBs6TVA7O4fg",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "internal",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "eksternal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "internal": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "eksternal": {
+      "main": [
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c0c1a6a6-3c2f-440a-bc3a-910ede31885e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9007b1df669f43ea191b3e1e78eb536902cd885465fc9e812ee34c32c3c060b6"
+  },
+  "nodeGroups": [],
+  "id": "0qb3qfdkgsbnbzZ4",
+  "tags": []
+}
